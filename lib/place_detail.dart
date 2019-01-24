@@ -2,7 +2,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-const kGoogleApiKey = "Your_Api_Key";
+const kGoogleApiKey = "Your_API_Key";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class PlaceDetailWidget extends StatefulWidget {
@@ -23,6 +23,7 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
   PlacesDetailsResponse place;
   bool isLoading = false;
   String errorLoading;
+
 
   @override
   void initState() {

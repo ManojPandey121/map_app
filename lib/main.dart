@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 import 'place_detail.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
 
 
-const kGoogleApiKey = "Your_Api_Key";
+const kGoogleApiKey = "Your_API_Key";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
+
 
 void main() {
   runApp(MaterialApp(
@@ -32,6 +35,15 @@ class HomeState extends State<Home> {
   bool isLoading = false;
   String errorMessage;
 
+  var showLatLong = <String, double>{};
+  double showLatitude,showLongitude;
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     Widget expandedChild;
@@ -45,14 +57,15 @@ class HomeState extends State<Home> {
       expandedChild = buildPlacesList();
     }
 
+
     return Scaffold(
         key: homeScaffoldKey,
         appBar: AppBar(
-          title: const Text("PlaceZ"),
+          title: const Text("Map View"),
           actions: <Widget>[
             isLoading
                 ? IconButton(
-              icon: Icon(Icons.timer),
+              icon: Icon(Icons.refresh),
               onPressed: () {},
             )
                 : IconButton(
@@ -73,15 +86,40 @@ class HomeState extends State<Home> {
           children: <Widget>[
             Container(
               child: SizedBox(
-                  height: 200.0,
+                  height: 400.0,
                   child: GoogleMap(
                       onMapCreated: _onMapCreated,
                       options: GoogleMapOptions(
                           myLocationEnabled: true,
                           cameraPosition:
                           const CameraPosition(target: LatLng(0.0, 0.0))))),
+
+
             ),
-            Expanded(child: expandedChild)
+            Container(
+
+
+                  child: new Text(' Latitude = ' + showLatitude.toString()+
+                                  '\n Longitude = ' + showLongitude.toString() +
+                                  '\n \n Detail Info : '+ showLatLong.toString(),
+                    textDirection: TextDirection.ltr,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.clip,
+
+                  ),
+                         // child: new Text(showLongititude.toString());
+
+
+
+
+
+
+
+
+            ),
+
+            Expanded(child: expandedChild),
+
           ],
         ));
   }
@@ -107,7 +145,11 @@ class HomeState extends State<Home> {
       final lat = currentLocation["latitude"];
       final lng = currentLocation["longitude"];
       final center = LatLng(lat, lng);
+      showLatLong = currentLocation;
+      showLatitude = lat;
+      showLongitude = lng;
       print(center);// -----------------------------------printing lat and long
+
 
 
       return center;
@@ -135,6 +177,7 @@ class HomeState extends State<Home> {
               LatLng(f.geometry.location.lat, f.geometry.location.lng),
               infoWindowText: InfoWindowText("${f.name}", "${f.types?.first}"));
           mapController.addMarker(markerOptions);
+
         });
       } else {
         this.errorMessage = result.errorMessage;
